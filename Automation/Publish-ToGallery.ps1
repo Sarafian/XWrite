@@ -8,13 +8,6 @@ $progressActivity="Publish $moduleName"
 
 try
 {
-    $tempWorkFolderPath=Join-Path $env:TEMP "$moduleName-Publish"
-    if(Test-Path $tempWorkFolderPath)
-    {
-        Remove-Item -Path $tempWorkFolderPath -Recurse -Force
-    }
-    New-Item -Path $tempWorkFolderPath -ItemType Directory|Out-Null
-    Write-Verbose "Temporary working folder $tempWorkFolderPath is ready"
 
     $modulePath=Resolve-Path "$PSScriptRoot\..\Source\Modules\$moduleName"
     $psm1Path=Join-Path $modulePath "$moduleName.psm1"

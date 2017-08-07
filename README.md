@@ -7,7 +7,11 @@ PowerShell module that enhances the output of the following core (`Microsoft.Pow
 - `Write-Information`
 - `Write-Warning`
 
-The output is enhanced with the following extra information
+| PowerShell normal output | PowerShell output with XWrite enabled |
+| ------------------------ | ------------------------------------- |
+| ![PowerShell normal](Images/PS-Normal.png)  | ![XWriteEnabled](Images/XWrite-Enabled.png) |
+
+The output can be enhanced with the following extra information:
 
 - The **Caller** that is the name of the script or module that execute the `Write-` cmdlet.
 - The **Date** that is the date part of the current date.
@@ -68,6 +72,8 @@ Test-XWrite.ps1: Hello
 WARNING: Test-XWrite.ps1: Hello
 ```
 
+![XWriteEnabled](Images/XWrite-Enabled.png)
+
 **Notice** the extra information `Test-XWrite.ps1: ` between the e.g. `DEBUG` and `Hello`.
 
 ## Example2
@@ -89,6 +95,8 @@ VERBOSE: Test-XWrite.ps1: 20170804: 10:57:27.858: Hello
 Test-XWrite.ps1: 20170804: 10:57:27.871: Hello
 WARNING: Test-XWrite.ps1: 20170804: 10:57:27.886: Hello
 ```
+
+![XWriteEnabled](Images/XWrite-Enabled-Full.png)
 
 **Notice** the extra information `Test-XWrite.ps1: 20170804: 10:57:27.845: ` between the e.g. `DEBUG` and `Hello`.
 
