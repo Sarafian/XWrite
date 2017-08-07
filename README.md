@@ -25,6 +25,8 @@ The enhancement works by placing a global implementation of the respected cmdlet
 
 # Demo
 
+## Default PowerShell output
+
 To demonstrate let's first create a sample function or script
 
 ```powershell
@@ -57,6 +59,8 @@ Test-MyXWrite
 
 ![PowerShell normal](Images/PS-Normal.png)
 
+## XWrite enhanced output
+
 ```powershell
 # Install the module
 Install-Module -Name XWrite -Scope CurrentUser -Force
@@ -69,6 +73,8 @@ Test-MyXWrite
 ```
 
 ![XWriteEnabled](Images/XWrite-Enabled.png)
+
+## XWrite advanced enhanced output
 
 ```powershell
 # Enable XWrite advanced output enhancement
@@ -89,7 +95,7 @@ There might be potential issues with type casting for the `Write-Host` and `Writ
 - Enable-XWrite
 - Disable-XWrite
 
-# Examples
+# Code examples
 
 ## Showcase script
 
