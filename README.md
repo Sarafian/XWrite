@@ -7,8 +7,8 @@ PowerShell module that enhances the output of the following core (`Microsoft.Pow
 - `Write-Information`
 - `Write-Warning`
 
-| PowerShell normal output | PowerShell output with XWrite enabled |
-| ------------------------ | ------------------------------------- |
+PowerShell normal output | PowerShell output with XWrite enabled
+:----------------------- | ------------------------------------:
 | ![PowerShell normal](Images/PS-Normal.png)  | ![XWriteEnabled](Images/XWrite-Enabled.png) |
 
 The output can be enhanced with the following extra information:
@@ -23,6 +23,63 @@ The enhancement works by placing a global implementation of the respected cmdlet
 
 **Note:** The module's overwrite does not work for binary modules or modules that explicitly use the full namespace of the `Write-*` cmdlets.
 
+# Demo
+
+To demonstrate let's first create a sample function or script
+
+```powershell
+# Sample function that uses Write-* commands without any changes
+function Test-MyXWrite
+{
+    param(
+    )
+
+    $message=@(
+        "DebugPreference=$DebugPreference"
+        "VerbosePreference=$VerbosePreference"
+        "InformationPreference=$InformationPreference"
+        "WarningPreference=$WarningPreference"
+    )
+    
+    $message|ForEach-Object {
+        Write-Host $_
+    }
+    
+    Write-Debug "DebugPreference=$DebugPreference"
+    Write-Verbose "VerbosePreference=$VerbosePreference"
+    Write-Information "InformationPreference=$InformationPreference"
+    Write-Warning "WarningPreference=$WarningPreference"
+}
+
+# Invoke test function to execute the Write-* commands
+Test-MyXWrite
+```
+
+![PowerShell normal](Images/PS-Normal.png)
+
+```powershell
+# Install the module
+Install-Module -Name XWrite -Scope CurrentUser -Force
+
+# Enable XWrite default output enhancement
+Enable-XWrite -ForAll
+
+# Invoke test function to execute the Write-* commands
+Test-MyXWrite
+```
+
+![XWriteEnabled](Images/XWrite-Enabled.png)
+
+```powershell
+# Enable XWrite advanced output enhancement
+Enable-XWrite -ForAll -Caller -Date -Time
+
+# Invoke test function to execute the Write-* commands
+Test-MyXWrite
+```
+
+![XWriteEnabled](Images/XWrite-Enabled-Full.png)
+
 # Known issues
 
 There might be potential issues with type casting for the `Write-Host` and `Write-Information` when non string values are used. For more information look into the **How does it work?** section below.
@@ -36,7 +93,7 @@ There might be potential issues with type casting for the `Write-Host` and `Writ
 
 ## Showcase script
 
-To showcase the functionality let's assume that e.g `Test-XWrite.ps1` exists like this
+To showcase the functionality let's assume that e.g `Test-MyXWrite.ps1` exists like this
 
 ```powershell
 $DebugPreference="Continue"
@@ -52,7 +109,7 @@ Write-Information $message
 Write-Warning $message
 ```
 
-## Example 1
+## Example 1 - Default output enhancement
 
 ```powershell
 # Enhance all supported Write-* cmdlets
@@ -63,20 +120,18 @@ Enable-XWrite -ForDebug -ForVerbose -ForInformation -ForWarning -ForHost
 
 ```
 
-When executing `Test-XWrite.ps1` the output is the same
+When executing `Test-MyXWrite.ps1` the output is the same
 
 ```text
-DEBUG: Test-XWrite.ps1: Hello
-VERBOSE: Test-XWrite.ps1: Hello
-Test-XWrite.ps1: Hello
-WARNING: Test-XWrite.ps1: Hello
+DEBUG: Test-MyXWrite.ps1: Hello
+VERBOSE: Test-MyXWrite.ps1: Hello
+Test-MyXWrite.ps1: Hello
+WARNING: Test-MyXWrite.ps1: Hello
 ```
 
-![XWriteEnabled](Images/XWrite-Enabled.png)
+**Notice** the extra information `Test-MyXWrite.ps1: ` between the e.g. `DEBUG` and `Hello`.
 
-**Notice** the extra information `Test-XWrite.ps1: ` between the e.g. `DEBUG` and `Hello`.
-
-## Example2
+## Example2 - Advanced output enhancement
 
 ```powershell
 # Enhance all supported Write-* cmdlets and specify the artifacts in the output
@@ -86,25 +141,23 @@ Enable-XWrite -ForAll -Caller -Date -Time
 Enable-XWrite -ForAll -Format "%caller%: %date%: %time%: "
 ```
 
-When executing `Test-XWrite.ps1` the output is
+When executing `Test-MyXWrite.ps1` the output is
 
 ```text
-Test-XWrite.ps1: 20170804: 10:57:27.831: Hello
-DEBUG: Test-XWrite.ps1: 20170804: 10:57:27.845: Hello
-VERBOSE: Test-XWrite.ps1: 20170804: 10:57:27.858: Hello
-Test-XWrite.ps1: 20170804: 10:57:27.871: Hello
-WARNING: Test-XWrite.ps1: 20170804: 10:57:27.886: Hello
+Test-MyXWrite.ps1: 20170804: 10:57:27.831: Hello
+DEBUG: Test-MyXWrite.ps1: 20170804: 10:57:27.845: Hello
+VERBOSE: Test-MyXWrite.ps1: 20170804: 10:57:27.858: Hello
+Test-MyXWrite.ps1: 20170804: 10:57:27.871: Hello
+WARNING: Test-MyXWrite.ps1: 20170804: 10:57:27.886: Hello
 ```
 
-![XWriteEnabled](Images/XWrite-Enabled-Full.png)
-
-**Notice** the extra information `Test-XWrite.ps1: 20170804: 10:57:27.845: ` between the e.g. `DEBUG` and `Hello`.
+**Notice** the extra information `Test-MyXWrite.ps1: 20170804: 10:57:27.845: ` between the e.g. `DEBUG` and `Hello`.
 
 # Formatting
 
 The module will add a prefix to the output with the following logic:
 
-- When no parameters are provided then only the **Caller** is added. e.g. `Test-XWrite.ps1`.
+- When no parameters are provided then only the **Caller** is added. e.g. `Test-MyXWrite.ps1`.
 - When the `-Caller` or `-Date` or `-Time` is specified, then their respected values are added using the optional value of the `-Separator` parameter with value `: `.
 - When `-Format` is specified then that custom format is used. The format can interpret `%caller%`,`%date%` and `%time%` variables.
 
@@ -112,7 +165,7 @@ This matrix that puts all above together in simple mapping:
 
 | Variable | Parameter | Example value | Remarks |
 |:-------- | --------- | ------------- | ------- |
-| `%caller%` | `-Caller` | Test-XWrite.ps1 | The name of the caller script or cmdlet |
+| `%caller%` | `-Caller` | Test-MyXWrite.ps1 | The name of the caller script or cmdlet |
 | `%date%` | `-Date` | 20170804 | the date stamp formatted as `yyyyMMdd` |
 | `%time%` | `-Time` | 10:57:27.858 | the time stamp formatted as `hh:mm:ss.fff` |
 
