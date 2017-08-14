@@ -30,9 +30,16 @@ function Disable-XWrite
             Get-ChildItem -Path "Function:\$_" -ErrorAction SilentlyContinue|Remove-Item -ErrorAction SilentlyContinue 
         }
 
-        if(Get-Variable -Name "XWrite:Prefix" -Scope Global -ErrorAction SilentlyContinue)
-        {
-            Remove-Variable -Name "XWrite:Prefix" -Scope Global -ErrorAction SilentlyContinue
+        $variablesToRemove=@(
+            "XWrite:Prefix:Custom"
+            "XWrite:Prefix:Source"
+            "XWrite:Prefix:Date"
+            "XWrite:Prefix:Time"
+            "XWrite:Prefix:Separator"
+            "XWrite:Prefix:Format"
+        )
+        $variablesToRemove|ForEach-Object {
+            Get-Variable -Name $_ -Scope Global -ErrorAction SilentlyContinue | Remove-Variable -Scope Global
         }
     }
 

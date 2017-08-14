@@ -73,7 +73,7 @@ try
             "Author"="Alex Sarafian"
             "Copyright"="(c) 2017 Alex Sarafian. All rights reserved."
             "RootModule"=$psm1Name
-            "Description"="A powershell module that enhances the output of Write-Host, Write-Debug, Write-Verbose, Write-Information and  Write-Warning"
+            "Description"="PowerShell module that focuses on enhancing the experience and output of tracing. Enhances the output of Write-Host, Write-Debug, Write-Verbose, Write-Information and  Write-Warning. Enables global tracing levels and can roll the setting back."
             "Guid"=$guid
             "ModuleVersion"=$sourceVersion
             "Path"=$psd1Path
