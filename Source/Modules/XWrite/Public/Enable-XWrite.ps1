@@ -38,19 +38,23 @@ function Enable-XWrite
         [Parameter(Mandatory=$false,ParameterSetName="Per level - Column format")]
         [Parameter(Mandatory=$false,ParameterSetName="Per level - Custom format")]
         [switch]$ForHost=$false,
-        [Parameter(Mandatory=$true,ParameterSetName="All - Column format")]
-        [Parameter(Mandatory=$true,ParameterSetName="All - Custom format")]
+        [Parameter(Mandatory=$true,ParameterSetName="All level - Column format")]
+        [Parameter(Mandatory=$true,ParameterSetName="All level - Custom format")]
         [switch]$ForAll,
-        [Parameter(Mandatory=$false,ParameterSetName="All - Column format")]
-        [switch]$Caller=$false,
-        [Parameter(Mandatory=$false,ParameterSetName="All - Column format")]
+        [Parameter(Mandatory=$false,ParameterSetName="All level - Column format")]
+        [Parameter(Mandatory=$false,ParameterSetName="Per level - Column format")]
+        [switch]$Source=$false,
+        [Parameter(Mandatory=$false,ParameterSetName="All level - Column format")]
+        [Parameter(Mandatory=$false,ParameterSetName="Per level - Column format")]
         [switch]$Date=$false,
-        [Parameter(Mandatory=$false,ParameterSetName="All - Column format")]
+        [Parameter(Mandatory=$false,ParameterSetName="All level - Column format")]
+        [Parameter(Mandatory=$false,ParameterSetName="Per level - Column format")]
         [switch]$Time=$false,
-        [Parameter(Mandatory=$false,ParameterSetName="All - Column format")]
+        [Parameter(Mandatory=$false,ParameterSetName="All level - Column format")]
+        [Parameter(Mandatory=$false,ParameterSetName="Per level - Column format")]
         [String]$Separator=": ",
-        [Parameter(Mandatory=$true,ParameterSetName="All")]
-        [Parameter(Mandatory=$true,ParameterSetName="All - Custom format")]
+        [Parameter(Mandatory=$true,ParameterSetName="All level - Custom format")]
+        [Parameter(Mandatory=$true,ParameterSetName="Per level - Custom format")]
         [string]$Format
     )
     begin {
@@ -59,41 +63,23 @@ function Enable-XWrite
         $parameterSetName=$PSCmdlet.ParameterSetName
         Microsoft.PowerShell.Utility\Write-Debug "parameterSetName=$parameterSetName"
 
-        #region Define format
+        #region Set formating global variables
 
         switch($PSCmdlet.ParameterSetName)
         {
             {$_ -like '*Column format'} {
-                $prefix=@()
-                if(-not ($Caller -or $TimeStamp))
-                {
-                    $prefix+='$($callerName)'
-                }
-        
-                if($Caller)
-                {
-                    $prefix+='$($callerName)'
-                }
-                if($Date)
-                {
-                    $prefix+='$($dateStamp)'
-                }
-                if($Time)
-                {
-                    $prefix+='$($timeStamp)'
-                }
-                $prefix=$prefix -join $Separator
-                $prefix+=$Separator
+                Set-Variable -Name "XWrite:Prefix:Custom" -Value $false -Scope Global
+                Set-Variable -Name "XWrite:Prefix:Source" -Value $Source -Scope Global
+                Set-Variable -Name "XWrite:Prefix:Date" -Value $Date -Scope Global
+                Set-Variable -Name "XWrite:Prefix:Time" -Value $Time -Scope Global
+                Set-Variable -Name "XWrite:Prefix:Separator" -Value $Separator -Scope Global
             }
             {$_ -like '*Custom format'} {
-                $prefix=$Format.Replace("%caller%",'$($callerName)').Replace("%date%",'$($dateStamp)').Replace("%time%",'$($timeStamp)')
+                Set-Variable -Name "XWrite:Prefix:Custom" -Value $true -Scope Global
+                Set-Variable -Name "XWrite:Prefix:Format" -Value $Format -Scope Global
             }
         }
 
-        Microsoft.PowerShell.Utility\Write-Debug "prefix=$prefix"
-
-        Set-Variable -Name "XWrite:Prefix" -Value $prefix -Scope Global
-        #Get-Variable -Name "XWrite:Prefix" -Scope Global -ValueOnly
         #endregion
         #region Injection fragments
 
@@ -102,12 +88,7 @@ function Enable-XWrite
                 Begin=@'
         #region Begin step injection
 
-        $callerName=(Get-PSCallStack)[1].Command
-        $dateStamp=Get-Date -Format "yyyyMMdd"
-        $timeStamp=Get-Date -Format "hh:mm:ss.fff"
-        # $callerParameterSetName=$null
-        $prefix=Get-Variable -Name "XWrite:Prefix" -Scope Global -ValueOnly
-        $prefix=$ExecutionContext.InvokeCommand.ExpandString($prefix)
+        $prefix=Get-XPrefix
 
         $PSBoundParameters.Object=$prefix+$PSBoundParameters.Object
 
@@ -118,12 +99,7 @@ function Enable-XWrite
                 Begin=@'
         #region Begin step injection
 
-        $callerName=(Get-PSCallStack)[1].Command
-        $dateStamp=Get-Date -Format "yyyyMMdd"
-        $timeStamp=Get-Date -Format "hh:mm:ss.fff"
-        # $callerParameterSetName=$null
-        $prefix=Get-Variable -Name "XWrite:Prefix" -Scope Global -ValueOnly
-        $prefix=$ExecutionContext.InvokeCommand.ExpandString($prefix)
+        $prefix=Get-XPrefix
 
         $PSBoundParameters.Message=$prefix+$PSBoundParameters.Message
 
@@ -134,12 +110,7 @@ function Enable-XWrite
                 Begin=@'
         #region Begin step injection
 
-        $callerName=(Get-PSCallStack)[1].Command
-        $dateStamp=Get-Date -Format "yyyyMMdd"
-        $timeStamp=Get-Date -Format "hh:mm:ss.fff"
-        # $callerParameterSetName=$null
-        $prefix=Get-Variable -Name "XWrite:Prefix" -Scope Global -ValueOnly
-        $prefix=$ExecutionContext.InvokeCommand.ExpandString($prefix)
+        $prefix=Get-XPrefix
 
         $PSBoundParameters.MessageData=$prefix+$PSBoundParameters.MessageData
     
