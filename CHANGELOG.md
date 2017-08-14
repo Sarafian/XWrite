@@ -6,6 +6,9 @@
   - a module name
 - Fix `Enable-XWrite` parameter set names
 - Parameter `-Caller` is removed. Caller will be always outputed.
+- New cmdlets for enabling and reseting preference variables:
+  - Set-XGlobalTrace
+  - Undo-XGlobalTrace
 
 **1.0**
 

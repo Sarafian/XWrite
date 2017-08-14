@@ -1,11 +1,16 @@
 # XWrite
 
-PowerShell module that enhances the output of the following core (`Microsoft.PowerShell.Utility`) cmdlets:
-- `Write-Host`
-- `Write-Debug`
-- `Write-Verbose`
-- `Write-Information`
-- `Write-Warning`
+PowerShell module that focuses on enhancing the experience and output of tracing
+
+The module can 
+
+- Enable full tracing for all preference variables and rollback their changes
+- Enhance the output of the following core (`Microsoft.PowerShell.Utility`) cmdlets:
+    - `Write-Host`
+    - `Write-Debug`
+    - `Write-Verbose`
+    - `Write-Information`
+    - `Write-Warning`
 
 PowerShell normal output | PowerShell output with XWrite enabled
 :----------------------- | ------------------------------------:
@@ -54,8 +59,14 @@ function Test-MyXWrite
     Write-Warning "WarningPreference=$WarningPreference"
 }
 
+# Enable full trace 
+Set-XGlobalTrace -ForAll
+
 # Invoke test function to execute the Write-* commands
 Test-MyXWrite
+
+# Disable full trace. Rollback to original settings
+Undo-XGlobalTrace
 ```
 
 ![PowerShell normal](Images/PS-Normal.png)
@@ -69,8 +80,14 @@ Install-Module -Name XWrite -Scope CurrentUser -Force
 # Enable XWrite default output enhancement
 Enable-XWrite -ForAll
 
+# Enable full trace 
+Set-XGlobalTrace -ForAll
+
 # Invoke test function to execute the Write-* commands
 Test-MyXWrite
+
+# Disable full trace. Rollback to original settings
+Undo-XGlobalTrace
 ```
 
 ![XWriteEnabled](Images/XWrite-Enabled.png)
@@ -81,8 +98,14 @@ Test-MyXWrite
 # Enable XWrite advanced output enhancement
 Enable-XWrite -ForAll -Source -Date -Time
 
+# Enable full trace 
+Set-XGlobalTrace -ForAll
+
 # Invoke test function to execute the Write-* commands
 Test-MyXWrite
+
+# Disable full trace. Rollback to original settings
+Undo-XGlobalTrace
 ```
 
 ![XWriteEnabled](Images/XWrite-Enabled-Full.png)
@@ -95,6 +118,8 @@ There might be potential issues with type casting for the `Write-Host` and `Writ
 
 - Enable-XWrite
 - Disable-XWrite
+- Set-XGlobalTrace
+- Undo-XGlobalTrace
 
 # Code examples
 
@@ -103,9 +128,8 @@ There might be potential issues with type casting for the `Write-Host` and `Writ
 To showcase the functionality let's assume that e.g `Test-MyXWrite.ps1` exists like this
 
 ```powershell
-$DebugPreference="Continue"
-$VerbosePreference="Continue"
-$InformationPreference="Continue"
+# Enable full trace 
+Set-XGlobalTrace -ForAll
 
 $message="Hello"
 
@@ -114,6 +138,9 @@ Write-Debug $message
 Write-Verbose $message
 Write-Information $message
 Write-Warning $message
+
+# Disable full trace. Rollback to original settings
+Undo-XGlobalTrace
 ```
 
 ## Example 1 - Default output enhancement
@@ -199,7 +226,7 @@ This is the a matrix that shows which parameter is modified for each core cmdlet
 | Write-Information | `-MessageData` | `System.Object` | Potential issues with type casting |
 | Write-Host | `-Message` | `System.Object` | Potential issues with type casting |
 
-This is the generated overwrite for `Write-Verbose`
+This is the generated overwrite for `Write-Verbose`. Notice that a `$prefix` is calculated by internal cmdlets `Get-XPrefix` and `Get-XCommandSource`.
 
 ```powershell
 [CmdletBinding(HelpUri='https://go.microsoft.com/fwlink/?LinkID=113429', RemotingCapability='None')]
@@ -216,12 +243,7 @@ begin
 
         #region Begin step injection
 
-        $callerName=(Get-PSCallStack)[1].Command
-        $dateStamp=Get-Date -Format "yyyyMMdd"
-        $timeStamp=Get-Date -Format "hh:mm:ss.fff"
-        # $callerParameterSetName=$null
-        $prefix=Get-Variable -Name "RichWrite:Prefix" -Scope Global -ValueOnly
-        $prefix=$ExecutionContext.InvokeCommand.ExpandString($prefix)
+        $prefix=Get-XPrefix
 
         $PSBoundParameters.Message=$prefix+$PSBoundParameters.Message
 
@@ -282,9 +304,7 @@ Set-StrictMode -Version latest
 Import-Module .\Source\Modules\XWrite\XWrite.psm1 -Force
 
 # Set all levels active for output verification
-$DebugPreference="Continue"
-$VerbosePreference="Continue"
-$InformationPreference="Continue"
+Set-XGlobalTrace -ForAll
 
 $WhatIfSplat=@{
 # Comment/Uncomment to enable WhatIf

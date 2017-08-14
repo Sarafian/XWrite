@@ -17,7 +17,7 @@
 .EXAMPLE
    Enable-XWrite -ForAll -Format "%caller% %date% %time%"
 . Link
-   https://www.powershellgallery.com/packages/Disable-XWrite
+   Disable-XWrite
 #>
 function Enable-XWrite 
 {
