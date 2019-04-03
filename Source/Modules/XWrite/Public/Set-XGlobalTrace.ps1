@@ -82,10 +82,7 @@ function Set-XGlobalTrace
                 {
                     if($PSVersionTable.PSVersion.Major -ge 5)
                     {
-                        if($OutputPreference)
-                        {
-                            $preferenceToSet+="InformationPreference"
-                        }
+                        $preferenceToSet+="InformationPreference"
                     }
                     else
                     {
