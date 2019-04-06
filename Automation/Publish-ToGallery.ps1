@@ -63,9 +63,10 @@ try
         #region manifest
         Write-Debug "Generating manifest"
     
+        $psd1Path=Join-Path $modulePath "$moduleName.psd1"
+        Remove-Item -Path $psd1Path -Force -ErrorAction SilentlyContinue
         Import-Module $psm1Path -Force 
-        $exportedNames=Get-Command -Module $moduleName | Select-Object -ExcludeProperty Name
-
+        $exportedNames=Get-Command -Module $moduleName|Select-Object -ExpandProperty Name
         $psm1Name=$moduleName+".psm1"
         $psd1Path=Join-Path $modulePath "$moduleName.psd1"
         $guid="3e84f03d-f88a-408c-a465-bc58a3268e4d"

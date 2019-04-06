@@ -1,4 +1,4 @@
-**1.2**
+**1.3**
 
 - New functionality that adds inline output for the `Write-Progress` native cmdlets.
     - `Enable-XWriteProgress`
