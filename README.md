@@ -11,6 +11,13 @@ The module can
     - `Write-Verbose`
     - `Write-Information`
     - `Write-Warning`
+- Add inline output for the native `Write-Progress` cmdlet.
+    - With `Write-Host`
+    - With `Write-Debug`
+    - With `Write-Verbose`
+    - With `Write-Information`
+
+## Enhance the output of the following core (`Microsoft.PowerShell.Utility`) cmdlets
 
 PowerShell normal output | PowerShell output with XWrite enabled
 :----------------------- | ------------------------------------:
@@ -110,16 +117,14 @@ Undo-XGlobalTrace
 
 ![XWriteEnabled](Images/XWrite-Enabled-Full.png)
 
-# Known issues
-
-There might be potential issues with type casting for the `Write-Host` and `Write-Information` when non string values are used. For more information look into the **How does it work?** section below.
-
 # Commandlets
 
 - Enable-XWrite
 - Disable-XWrite
 - Set-XGlobalTrace
 - Undo-XGlobalTrace
+- Enable-XWriteProgress
+- Disable-XWriteProgress
 
 # Code examples
 

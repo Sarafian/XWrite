@@ -1,30 +1,45 @@
+<#
+.Synopsis
+   Adds inline output to Write-Progress messages
+.DESCRIPTION
+   Adds inline output to Write-Progress messages.
+   This means that all Write-Progress messages will be also captured by the transcription.
+.EXAMPLE
+   Enable-XWriteProgress -UseDebug
+.EXAMPLE
+   Enable-XWriteProgress -UseVerbose
+.EXAMPLE
+   Enable-XWriteProgress -UseInformation
+.EXAMPLE
+   Enable-XWriteProgress -UseHost
+.EXAMPLE
+   Enable-XWriteProgress -UseHost -ForegroundColor DarkYellow -BackgroundColor DarkBlue
+.EXAMPLE
+   Enable-XWriteProgress -UseHost -ForegroundColor DarkYellow -BackgroundColor DarkBlue -Prefix CustomPrefix
+.Link
+   Disable-XWriteProgress
+#>
 function Enable-XWriteProgress
 {
     [CmdletBinding(SupportsShouldProcess = $true)]
     Param(
         [Parameter(Mandatory = $true, ParameterSetName = "Debug")]
-#        [Parameter(Mandatory = $true, ParameterSetName = "Debug - Custom format")]
         [switch]$UseDebug = $false,
         [Parameter(Mandatory = $true, ParameterSetName = "Verbose")]
-#        [Parameter(Mandatory = $true, ParameterSetName = "Verbose - Custom format")]
         [switch]$UseVerbose = $false,
         [Parameter(Mandatory = $true, ParameterSetName = "Information")]
-#        [Parameter(Mandatory = $true, ParameterSetName = "Information - Custom format")]
         [switch]$UseInformation = $false,
         [Parameter(Mandatory = $true, ParameterSetName = "Host")]
-#        [Parameter(Mandatory = $true, ParameterSetName = "Host - Custom format")]
         [switch]$UseHost = $false,
         [Parameter(Mandatory = $false, ParameterSetName = "Host")]
-#        [Parameter(Mandatory = $false, ParameterSetName = "Host - Custom format")]
         [ConsoleColor]$ForegroundColor,
         [Parameter(Mandatory = $false, ParameterSetName = "Host")]
-#        [Parameter(Mandatory = $false, ParameterSetName = "Host - Custom format")]
-        [ConsoleColor]$BackgroundColor
-<#
-        [Parameter(Mandatory=$true,ParameterSetName="All level - Custom format")]
-        [Parameter(Mandatory=$true,ParameterSetName="Per level - Custom format")]
-        [string]$Format
-#>        
+        [ConsoleColor]$BackgroundColor,
+        [Parameter(Mandatory=$false,ParameterSetName="Debug")]
+        [Parameter(Mandatory=$false,ParameterSetName="Verbose")]
+        [Parameter(Mandatory=$false,ParameterSetName="Information")]
+        [Parameter(Mandatory=$false,ParameterSetName="Host")]
+        [string]$Prefix="Write-Progress: "
     )
     begin
     {
@@ -32,6 +47,12 @@ function Enable-XWriteProgress
         $parameterSetName = $PSCmdlet.ParameterSetName
         Write-Debug "parameterSetName=$parameterSetName"
 
+        #region Set formating global variables
+
+        Set-Variable -Name "XWriteProgress:Prefix" -Value $Prefix -Scope Global
+
+        #endregion
+        
         #region Injection fragments
         switch ($PSCmdlet.ParameterSetName)
         {
@@ -72,7 +93,7 @@ function Enable-XWriteProgress
         $injections = @{
             Begin   = @'
 
-        $extraRendering=Get-XProgressPrefix @PSBoundParameters
+        $extraRendering=Get-XProgressRender @PSBoundParameters
 
         #region Parameters for extra cmdlet
 

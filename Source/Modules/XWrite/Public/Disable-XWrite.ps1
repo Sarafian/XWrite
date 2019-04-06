@@ -5,7 +5,7 @@
    Remove all overwrites from .\Import-EnhancedWriteCommands.ps1
 .EXAMPLE
    Disable-XWrite
-. Link
+.Link
    Enable-XWrite
 #>
 function Disable-XWrite

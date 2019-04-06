@@ -1,11 +1,11 @@
 <#
 .Synopsis
-   Remove the enhanced version of the Write-Progress
+   Remove the enhanced inline output of the Write-Progress
 .DESCRIPTION
-   Remove the enhanced version of the Write-Progress
+   Remove the enhanced inline output of the Write-Progress
 .EXAMPLE
    Disable-XWriteProgress
-. Link
+.Link
    Enable-XWriteProgress
 #>
 function Disable-XWriteProgress
@@ -25,19 +25,12 @@ function Disable-XWriteProgress
         )|ForEach-Object {
             Get-ChildItem -Path "Function:\$_" -ErrorAction SilentlyContinue|Remove-Item -ErrorAction SilentlyContinue 
         }
-<#
         $variablesToRemove=@(
-            "XWrite:Prefix:Custom"
-            "XWrite:Prefix:Source"
-            "XWrite:Prefix:Date"
-            "XWrite:Prefix:Time"
-            "XWrite:Prefix:Separator"
-            "XWrite:Prefix:Format"
+            "XWriteProgress:Prefix"
         )
         $variablesToRemove|ForEach-Object {
             Get-Variable -Name $_ -Scope Global -ErrorAction SilentlyContinue | Remove-Variable -Scope Global
         }
-#>
     }
 
     end {
