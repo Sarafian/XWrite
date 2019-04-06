@@ -1,14 +1,14 @@
 <#
 .Synopsis
-   Remove the enhanced version of the Write-* cmdlets that include a prefix with the caller's name
+   Remove the enhanced inline output of the Write-Progress
 .DESCRIPTION
-   Remove all overwrites from .\Import-EnhancedWriteCommands.ps1
+   Remove the enhanced inline output of the Write-Progress
 .EXAMPLE
-   Disable-XWrite
+   Disable-XWriteProgress
 .Link
-   Enable-XWrite
+   Enable-XWriteProgress
 #>
-function Disable-XWrite
+function Disable-XWriteProgress
 {
     [CmdletBinding(SupportsShouldProcess=$true)]
     Param(
@@ -21,22 +21,12 @@ function Disable-XWrite
 
     process {
         $cmdNames=@(
-            "Write-Host"
-            "Write-Debug"
-            "Write-Verbose"
-            "Write-Information"
-            "Write-Warning"
+            "Write-Progress"
         )|ForEach-Object {
             Get-ChildItem -Path "Function:\$_" -ErrorAction SilentlyContinue|Remove-Item -ErrorAction SilentlyContinue 
         }
-
         $variablesToRemove=@(
-            "XWrite:Prefix:Custom"
-            "XWrite:Prefix:Source"
-            "XWrite:Prefix:Date"
-            "XWrite:Prefix:Time"
-            "XWrite:Prefix:Separator"
-            "XWrite:Prefix:Format"
+            "XWriteProgress:Prefix"
         )
         $variablesToRemove|ForEach-Object {
             Get-Variable -Name $_ -Scope Global -ErrorAction SilentlyContinue | Remove-Variable -Scope Global

@@ -1,3 +1,10 @@
+**1.2**
+
+- New functionality that adds inline output for the `Write-Progress` native cmdlets.
+    - `Enable-XWriteProgress`
+    - `Disable-XWriteProgress`
+- Minor decorative fixes in other cmdlets.    
+
 **1.1**
 
 - New segment in output `-Source` or `%source%` which can be 

@@ -16,7 +16,7 @@
    Enable-XWrite -ForAll -Caller -Date -Time
 .EXAMPLE
    Enable-XWrite -ForAll -Format "%caller% %date% %time%"
-. Link
+.Link
    Disable-XWrite
 #>
 function Enable-XWrite 
