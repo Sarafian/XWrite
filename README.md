@@ -1,3 +1,6 @@
+[![Build status](https://ci.appveyor.com/api/projects/status/kcnxcg1p2n0t4nm9/branch/master?svg=true)](https://ci.appveyor.com/project/Alex61243/xwrite/branch/master)
+[![XWrite@PowerShell Gallery](https://img.shields.io/powershellgallery/dt/XWrite?label=XWrite%40PowerShell%20Gallery)](https://www.powershellgallery.com/packages/XWrite/)
+
 # XWrite
 
 PowerShell module that focuses on enhancing the experience and output of tracing
