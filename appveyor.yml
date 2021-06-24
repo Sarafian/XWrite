@@ -1,7 +1,10 @@
 version: 1.0.{build}
 image: Ubuntu1804
 init:
-- pwsh: Get-ChildItem ENV:\
+- pwsh:  >-
+    $PSVersionTable
+
+    Get-ChildItem ENV:\
 install:
 - pwsh: >-
     $modules=@(
@@ -13,8 +16,9 @@ install:
 
     Get-Module -Name $modules -ListAvailable|Format-Table Name,Version,Path
 build: off
-test_script:
-- pwsh: '& .\CI\Invoke-Test.ps1 -AppVeyor'
+# There are no tests and Pester v5 throws error
+# test_script:
+# - pwsh: '& .\CI\Invoke-Test.ps1 -AppVeyor'
 for:
 
 -
