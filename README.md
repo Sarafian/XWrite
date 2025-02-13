@@ -370,3 +370,10 @@ WARNING: <ScriptBlock>: When enabled
 1. Improve the overwrite's implementation when the parameter is of type `System.Object` for 
     - `Write-Host`.
     - `Write-Information`.
+  
+> [!IMPORTANT]  
+> If you consistently use this module, please contact me. I'm just curious.
+> Links on my [Github profile].
+> Thank you.
+
+[Github profile]: https://github.com/Sarafian
